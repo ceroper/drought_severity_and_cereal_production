@@ -3,34 +3,13 @@ import numpy as np
 import xarray as xr
 
 def monthly_severity_per_year(x):
-    """
-    x: xarray.DataArray with 'spi' monthly and 'time' coordinate (datetime)
-    Returns DataFrame with counts of months in each drought severity per year
-    """
-    # Resample to annual frequency, using last value per year
-    annual = x.resample(time='1YE').last()
-    annual = annual.to_pandas()
-
-    # Assign year
-    annual['year'] = annual.index.year
-
-    # Define bins and severity names
-    bins = [-np.inf, -2.0, -1.5, -1.0, 0, np.inf]
-    labels = ['Extreme Drought', 'Severe Drought', 'Moderate Drought', 'Mild Drought', 'No Drought']
-
-    # Categorize SPI values into integer codes (0 to 4)
-    annual['bin_id'] = pd.cut(annual['spi'], bins=bins, labels=False)
-
-    # Map codes to actual label strings
-    code_to_label = {i: l for i, l in enumerate(labels)}
-    annual['severity'] = annual['bin_id'].map(code_to_label)
-
-    # Count months per year per severity
-    result = annual.groupby('year')['severity'].count().reset_index()
-
-    # Make sure all severity columns exist (even if zero)
-    # The columns will be: year, Extreme Drought, Severe Drought, Moderate Drought, Mild Drought, No Drought
-    return result
+  '''takes x, an xarray.DataArray with variable 'spi' monthly and outputs a pandas dataframe of the number of months at each severity level per year'''
+  yearly = x.groupby('time.year').map(lambda x: x.groupby_bins(x, bins=[-np.inf, -1, 0, np.inf]).count()).fillna(0)
+  yearly = yearly.to_dataframe().pivot_table(index = 'year', columns = 'spi_bins')
+  yearly.columns = yearly.columns.droplevel(0)
+  new_column_names = ['Severe', 'Mild', 'No Drought']
+  yearly.columns = new_column_names
+  return yearly
 
 def categorize_spi(spi_data_array):
   """

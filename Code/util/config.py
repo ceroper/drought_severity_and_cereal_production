@@ -15,6 +15,7 @@ DATA_DIR = CODE_DIR / "data"
 CHIRPS_FILE = "chirps_sel.nc"
 COUNTRY_MASK_FILE = "CountryMergedNC.nc"
 FAOSTAT_FILE = "FAOSTAT_data_en_7-18-2026.csv"
+WDI_CEREAL_FILE = "data_cereal_land.csv"
 ANNUAL_SPI_VIETNAM_FILE = "annual_spi_vietnam.csv"
 ANNUAL_SPI_INDONESIA_FILE = "annual_spi_indonesia.csv"
 

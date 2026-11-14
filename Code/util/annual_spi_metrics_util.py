@@ -4,10 +4,10 @@ import xarray as xr
 
 def monthly_severity_per_year(x):
   '''takes x, an xarray.DataArray with variable 'spi' monthly and outputs a pandas dataframe of the number of months at each severity level per year'''
-  yearly = x.groupby('time.year').map(lambda x: x.groupby_bins(x, bins=[-np.inf, -1, 0, np.inf]).count()).fillna(0)
+  yearly = x.groupby('time.year').map(lambda x: x.groupby_bins(x, bins=[-np.inf, -2, -1.5, -1, 0, np.inf]).count()).fillna(0)
   yearly = yearly.to_dataframe().pivot_table(index = 'year', columns = 'spi_bins')
   yearly.columns = yearly.columns.droplevel(0)
-  new_column_names = ['Severe', 'Mild', 'No Drought']
+  new_column_names = ['Extreme', 'Severe', 'Moderate', 'Mild', 'No Drought']
   yearly.columns = new_column_names
   return yearly
 
